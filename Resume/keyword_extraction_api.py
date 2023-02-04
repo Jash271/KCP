@@ -1,3 +1,14 @@
+# how to do matching
+# remember we are going to have multiple input strings, corresponding to every box (skills, experience etc)
+# looking for grammar and speeling mistakes in the strings and see repetitive words
+# how to find out degree
+# infer skills from extra curr
+# see more about comprehend_client
+
+
+# word2vec
+# doc2vec
+
 import json
 from collections import Counter
 
@@ -30,13 +41,6 @@ def text_to_keys(str)->dict:
 
 def fn()->dict:
     pass
-
-# how to do matching
-# remember we are going to have multiple input strings, corresponding to every box (skills, experience etc)
-# looking for grammar and speeling mistakes in the strings and see repetitive words
-# how to find out degree
-# infer skills from extra curr
-# see more about comprehend_client
 
 
 def get_input_str()->str:
