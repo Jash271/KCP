@@ -132,3 +132,4 @@ env
 Job_Scraping/node_modules
 Google_OAuth2/node_modules
 OAuth_Handler/node_modules
+KCP_Backend_Server/node_modules
