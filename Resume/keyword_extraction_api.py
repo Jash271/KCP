@@ -6,15 +6,11 @@
 # see more about comprehend_client
 
 
-# word2vec
-# doc2vec
-
 import json
 from collections import Counter
 
 import requests
 from spellchecker import SpellChecker
-from textblob import TextBlob
 
 url = "https://508uo293jg.execute-api.us-east-1.amazonaws.com/get_keyword"
 
@@ -75,6 +71,7 @@ def check_repetitive_words(s: str):
     return most_freq_words
     
 
+# Returns a pair of quantifiable items and the dictionary of frequency of keywords(title/org).
 def entities_dict(json_dict: dict):
     quantifiable_entities = 0
     key_dict = {}
