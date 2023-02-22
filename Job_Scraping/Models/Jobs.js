@@ -30,6 +30,11 @@ const JobSchema = new mongoose.Schema({
     Job_Query: {
         type: String,
         required: true,
+    },
+    CK: {
+        type: String,
+        required: true,
+        unique: true,
     }
 
 },

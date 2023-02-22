@@ -7,6 +7,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const Job = require('./Models/Jobs');
+//Job.createIndexes({ Title: "text", Company: "text", Location: "text", Job_Tag: "text", Job_Query: "text" },{unique:true});
 const app = express();
 app.use(cors());
 connectDB()
@@ -34,6 +35,7 @@ async function get_jobs(job_type) {
         const $ = await cheerio.load(html);
         const jobs = $('li')
         jobs.each((index, element) => {
+
             const jobTitle = $(element).find('h3.base-search-card__title').text().trim()
             const company = $(element).find('h4.base-search-card__subtitle').text().trim()
             const location = $(element).find('span.job-search-card__location').text().trim()
@@ -44,7 +46,8 @@ async function get_jobs(job_type) {
                 'Location': location,
                 'Link': link,
                 "Job_Tag":"Linkedin",
-                "Job_Query":job_type
+                "Job_Query":job_type,
+                "CK":jobTitle+company+location
             }
             //console.log(resp_body)
             linkedinJobs.push(resp_body);
@@ -58,13 +61,17 @@ async function get_jobs(job_type) {
 }
 
 
-const Linkedin_Job = new CronJob('30  08 03 * * *', function() {
-    console.log("LinekdIn Cron Job Started");
-    const data = get_jobs("Software Engineering  Internship");
+const Linkedin_Job = new CronJob('10  * * * * *', function() {
+    console.log("LinkedIn Cron Job Started");
+    const data = get_jobs("Machine Learning Internship");
     data.then(response => {
     let tmp_res = response['data'];
-    Job.insertMany(tmp_res).then(resp => { console.log("Linkedin Jobs Inserted") }).catch(err => { console.log(err) })
-    }).catch(err => { console.log(err) })
+    Job.insertMany(tmp_res,{ordered:false}).then(resp => { console.log("Linkedin Jobs Inserted") }).catch(err => { 
+
+        console.log("Linkedin")
+        //onsole.log(err)                           
+    })
+    }).catch(err => { console.log("There was error") })
     }, null, true, 'America/Los_Angeles');
 //console.log(data)
 
@@ -87,18 +94,22 @@ const fetch_adzuna_job = async (job_type) => {
                 'Location':ele['location']['display_name'],
                 'Link':ele['redirect_url'],
                 'Job_Tag':"Adzuna",
-                'Job_Query':job_type
+                'Job_Query':job_type,
+                'CK':ele['title']+ele['company']+ele['location']
             }
             final_data.push(job_body)
         })
         return final_data
 }
 
-const Adzuna_Job = new CronJob('30 08 03 * * *', function() {
+const Adzuna_Job = new CronJob('10 * * * * *', function() {
     console.log("Adzuna Cron Job Started");
     const data = fetch_adzuna_job("Machine Learning Internship");
     data.then(response => {
-    Job.insertMany(response).then(resp => { console.log("Adzuna Jobs Inserted") }).catch(err => { console.log(err) })
+    Job.insertMany(response,{ordered:false}).then(resp => { console.log("Adzuna Jobs Inserted") }).catch(err => { 
+        console.log("Adzuna")
+        //console.log(err)                         
+    })
     }).catch(resp => {
     console.log("There was some error");
     })}, null, true, 'America/Los_Angeles');
