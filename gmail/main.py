@@ -12,6 +12,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+import pandas as pd
 
 class HTMLTextExtractor(html.parser.HTMLParser):
     def __init__(self):
@@ -34,26 +35,15 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 
 def get_email_data(service, message_id):
-    msgData = service.users().messages().list(userId='me').execute()['messages']
-    idList = []
-    for i in range(len(msgData)):
-        idList.append(msgData[i]['id'])
-    print(len(idList))
     msg = service.users().messages().get(id=message_id,userId='me', format='raw').execute()
-    msg_str = base64.urlsafe_b64decode(msg['raw'])
-    # print(msg_str)
-    email_msg = email.message_from_bytes(msg_str)
+    msg_str = base64.urlsafe_b64decode(msg['raw'])    
+    email_msg = email.message_from_bytes(msg_str)    
     body=None
     html=''
 
     email_subject = email_msg.get_all('Subject')
     from_sender = email_msg.get_all('From')
-    to_recipient = email_msg.get_all('To')
-    return_path = email_msg.get_all('Return-Path')
-    delivered_to = email_msg.get_all('Delivered-To')
-    datetime_rx = email_msg.get_all('Date')
-
-    print(email_subject)
+    datetime_rx = email_msg.get_all('Date')    
 
     if email_msg.is_multipart():
         for part in email_msg.walk():
@@ -92,8 +82,8 @@ def get_email_data(service, message_id):
     else:
         body  = html_to_text(html)
         body = body.strip()
-    body = re.sub(r'\n\s*\n', '\n\n',body)
-    print(body)
+    body = re.sub(r'\n\s*\n', '\n\n',str(body))
+    return from_sender, email_subject, body, datetime_rx
 
 
 
@@ -115,44 +105,36 @@ def main():
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
     try:
-        # Call the Gmail API
         service = build('gmail', 'v1', credentials=creds)
-        get_email_data(service,'186064f58a574920')
-        print('################################################################################################')
-        get_email_data(service,'185fc4fa5d982eda')
-        print('################################################################################################')
-        get_email_data(service,'185f29195ee26c4b')
-        return
-        results = service.users().labels().list(userId='me').execute()
-        print(results)
-
-        labels = results.get('labels', [])
-
-        if not labels:
-            print('No labels found.')
-            return
-        print('Labels:')
-        print(labels)
-        # for label in labels:
-            # print(type(label))
-            # print(label['name'])
+        res = service.users().messages().list(userId='me',maxResults=50,q='after:2022/01/01').execute()
+   
+        senderList = []
+        bodyList = []
+        subjectList = []
+        dateTimeList = []
+        msgIdList = []
+        for msg in res['messages']:
+            sender, subject, body, dateTime = get_email_data(service, msg['id'])            
+            body = removeCSS(body)                     
+            senderList.append(sender)
+            bodyList.append(body)
+            subjectList.append(subject)
+            dateTimeList.append(dateTime)
+            msgIdList.append(msg['id'])
+        
+        df = pd.DataFrame(list(zip(msgIdList, senderList, subjectList, bodyList, dateTimeList)))        
 
     except HttpError as error:
-        # TODO(developer) - Handle errors from gmail API.
         print(f'An error occurred: {error}')
 
+
+def removeCSS(body):
+    return re.sub('{.*.}','',body,flags=re.S)    
 
 if __name__ == '__main__':
     main()
 
-
-
-"""
-dict_keys(['id', 'threadId', 'labelIds', 'snippet', 'payload', 'sizeEstimate', 'historyId', 'internalDate'])
-payload: dict_keys(['partId', 'mimeType', 'filename', 'headers', 'body'])
-"""
