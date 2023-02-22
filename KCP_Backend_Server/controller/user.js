@@ -60,6 +60,21 @@ exports.Signup = async (req, res) => {
     }
   };
   
+  exports.UpdateLastScanTime = async (req, res, next) => {
+    try {
+      const usr = await User.findById(req.user._id);
+      usr.last_scan_timestamp = req.body.last_scan_time;
+      await usr.save();
+      return res.status(200).json({
+        msg: 'Successfully Updated',
+        success: true,
+      });
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ msg: 'Internal Server Error' });
+    }
+  }
   exports.hello = async(req,res,next)=>{
     return res.status(500).json({
         msg:'Hello'

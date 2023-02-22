@@ -18,7 +18,11 @@ const UserSchema = new mongoose.Schema({
     },
     Gmail_Access:{
         type: Object
-    }
+    },
+    last_scan_timestamp:{
+        type: String,
+        default: '1641024000'
+    },
 
 
   },

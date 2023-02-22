@@ -1,9 +1,9 @@
 require('dotenv').config();
 const axios = require('axios');
 const morgan = require('morgan');
-const axios = require('axios');
+//const axios = require('axios');
 const cheerio = require('cheerio');
-const ObjectsToCsv = require('objects-to-csv');
+//const ObjectsToCsv = require('objects-to-csv');
 const CronJob = require('cron').CronJob;
 //const Connectdb = require('./config/db');
 const express = require('express');
@@ -19,7 +19,7 @@ app.use(morgan('dev'));
 //app.use('/api/user',user)
 connectDB()
 app.use(express.json({ extended: false }));
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 
 /*const oauth2Client = new google.auth.OAuth2(

@@ -6,7 +6,7 @@ const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 const oauth2Client = new google.auth.OAuth2(
     '564790885481-7d0fdgi7jirh5mke5u4r3v2dqvbj8ba9.apps.googleusercontent.com',
     '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',
-    'http://localhost:5000/api/google_auth/oauth2callback'
+    'http://localhost:3000/api/google_auth/oauth2callback'
   );
 
 exports.Generate_Url = async (req,res,next)=>{
