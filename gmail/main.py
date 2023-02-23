@@ -119,7 +119,7 @@ def main():
         msgIdList = []
         for msg in res['messages']:
             sender, subject, body, dateTime = get_email_data(service, msg['id'])            
-            body = removeCSS(body)                     
+            body = cleanBody(body)                     
             senderList.append(sender)
             bodyList.append(body)
             subjectList.append(subject)
@@ -132,8 +132,16 @@ def main():
         print(f'An error occurred: {error}')
 
 
-def removeCSS(body):
-    return re.sub('{.*.}','',body,flags=re.S)    
+def cleanBody(body):
+    body = re.sub('{.*.}','',body,flags=re.S)
+    body = re.sub('http\S+\s*', ' ', body)  # remove URLs
+    body = re.sub('RT|cc', ' ', body)  # remove RT and cc
+    body = re.sub('#\S+', '', body)  # remove hashtags
+    body = re.sub('@\S+', '  ', body)  # remove mentions    
+    body = re.sub('[%s]' % re.escape("""!"#$%&'()*+,-/;<=>?@[\]^_`{|}~"""), ' ', body)  # remove punctuations
+    body = re.sub(r'[^\x00-\x7f]', r' ', body)
+    body = re.sub('\s+', ' ', body)  # remove extra whitespace
+    return body  
 
 if __name__ == '__main__':
     main()
