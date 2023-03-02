@@ -10,27 +10,11 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
 
-documents = [
-    'Machine learning is the study of computer algorithms that improve automatically through experience.\
-Machine learning algorithms build a mathematical model based on sample data, known as training data.\
-The discipline of machine learning employs various approaches to teach computers to accomplish tasks \
-where no fully satisfactory algorithm is available.',
-    'Machine learning is closely related to computational statistics, which focuses on making predictions using computers.\
-The study of mathematical optimization delivers methods, theory and application domains to the field of machine learning.',
-    'Machine learning involves computers discovering how they can perform tasks without being explicitly programmed to do so. \
-It involves computers learning from data provided so that they carry out certain tasks.',
-    'Machine learning approaches are traditionally divided into three broad categories, depending on the nature of the "signal"\
-or "feedback" available to the learning system: Supervised, Unsupervised and Reinforcement',
-    'Software engineering is the systematic application of engineering approaches to the development of software.\
-Software engineering is a computing discipline.',
-    'A software engineer creates programs based on logic for the computer to execute. A software engineer has to be more concerned\
-about the correctness of the program in all the cases. Meanwhile, a data scientist is comfortable with uncertainty and variability.\
-Developing a machine learning application is more iterative and explorative process than software engineering.'
-]
+from keyword_extraction_api import get_improvements
 
-
-# Finally we will remove this function.
-# Not that much needed.
+'''
+Finally we will remove this function.
+Not that much needed.
 def most_similar(doc_id, similarity_matrix, matrix, documents_df):
     print(f'Document: {documents_df.iloc[doc_id]["documents"]}')
     print('\n')
@@ -46,9 +30,18 @@ def most_similar(doc_id, similarity_matrix, matrix, documents_df):
         print(f'Document: {documents_df.iloc[ix]["documents"]}')
         print(f'{matrix} : {similarity_matrix[doc_id][ix]}')
 
+'''
+
+
+def most_similar(resume_id, jd_id, similarity_matrix, matrix, documents_df) -> list:
+    # print(f'Document: {documents_df.iloc[doc_id]["documents"]}')
+    # print(f'Document: {documents_df.iloc[1]["documents"]}')
+    return [matrix, similarity_matrix[resume_id][jd_id]]
+    # return f'{matrix} between Resume and Job Description: {similarity_matrix[resume_id][jd_id]}'
+
 
 # Checks the similarity between the inputs, using the already saved model.
-def resume_jd_similarity():
+def resume_jd_similarity(documents) -> list:
     pd.set_option('display.max_colwidth', 0)
     pd.set_option('display.max_columns', 0)
 
@@ -63,6 +56,7 @@ def resume_jd_similarity():
         TaggedDocument(words=word_tokenize(doc), tags=[i])
         for i, doc in enumerate(documents_df['documents_cleaned'])
     ]
+    
     model_d2v = Doc2Vec.load('doc2vec.model')
 
     document_embeddings = np.zeros((documents_df.shape[0], 100))
@@ -71,23 +65,35 @@ def resume_jd_similarity():
 
     pairwise_similarities = cosine_similarity(document_embeddings)
 
-    # print(type(pairwise_similarities))
-
-    most_similar(0, pairwise_similarities, 'Cosine Similarity', documents_df)
+    return most_similar(0, 1, pairwise_similarities, 'Cosine Similarity', documents_df), tagged_data
 
 
 # Extract information from the pdf resume in the form of a string.
-def extract_resume() -> str:
-    resume_path = '/Users/keshavbhalla/Desktop/KeshavBhalla_Resume.pdf'
+def extract_resume(file_obj) -> str:
     resume = ''
-    pdfReader = PyPDF2.PdfReader(resume_path)
+    pdfReader = PyPDF2.PdfReader(file_obj)
     for i in range(len(pdfReader.pages)):
         pageObj = pdfReader.pages[i]
         resume += pageObj.extract_text()
     resume = resume.lower()
     resume = re.sub('\W+', ' ', resume)
     return resume
-    # print(resume)
+
+
+def get_response(jd_text, resume="", resume_obj=None) -> str:
+    # Fetch resume
+    response = ""
+    if resume == "":
+        resume = extract_resume(resume_obj)
+
+    # cal similarity
+    documents = [resume, jd_text]
+    sim_list, tagged_data = resume_jd_similarity(documents)
+    response += f'{sim_list[0]} between Resume and Job Description: {sim_list[1]}'
+    response += "\n\n\n"
+    # response += get_improvements(resume, jd_text)
+    response += get_improvements(resume, jd_text, tagged_data=tagged_data)
+    return response
 
 
 def main():

@@ -15,7 +15,9 @@ from spellchecker import SpellChecker
 url = "https://508uo293jg.execute-api.us-east-1.amazonaws.com/get_keyword"
 
 # Function accepts string as an argument and returns an Json dictionary
-def text_to_keys(str)->dict:
+
+
+def text_to_keys(str) -> dict:
     payload = json.dumps({
         "text": str
     })
@@ -25,7 +27,7 @@ def text_to_keys(str)->dict:
 
     response = requests.request("GET", url, headers=headers, data=payload)
 
-    if(not response.ok):
+    if (not response.ok):
         print("ERROR")
         # return {}
         # how exactly are we gonna handle this ??
@@ -35,11 +37,11 @@ def text_to_keys(str)->dict:
     return json_dict
 
 
-def fn()->dict:
+def fn() -> dict:
     pass
 
 
-def get_input_str()->str:
+def get_input_str() -> str:
     s = "Python Java Implemented a Microsoft PowerPlatform Application to automate access requests \
         for S/4 systems by reducing manual effort by around 60% Integrated GSAP (SAP ECC system) with a 3rd party tool\
         Hexagon for replacing legacy system to cloud. Analyzed and managed defect management process to ensure no delays \
@@ -50,8 +52,8 @@ def get_input_str()->str:
     return s
 
 
-def get_job_description()->str:
-    s  = "Exposed data in a machine-friendly format and designed an efficient pre-processing module for handling bulk\
+def get_job_description() -> str:
+    s = "Exposed data in a machine-friendly format and designed an efficient pre-processing module for handling bulk\
          and real-time data requests, reducing overall latency from minutes to a few seconds. Modified service responsible\
              for generating stats of components, to get access to and modify data on a granular level. Setting up an automation\
                  pipeline for data extraction from Stargate service and insertion into TimescaleDB. Designed a data analytics \
@@ -64,54 +66,103 @@ def get_job_description()->str:
 
 def check_repetitive_words(s: str):
     str_list = s.split()
- 
+
     frequency = Counter(str_list)
     # most_freq_words = frequency.most_common()[:5]
     most_freq_words = Counter({k: c for k, c in frequency.items() if c > 3})
     return most_freq_words
-    
+
 
 # Returns a pair of quantifiable items and the dictionary of frequency of keywords(title/org).
-def entities_dict(json_dict: dict):
-    quantifiable_entities = 0
+# def entities_dict(json_dict: dict):
+#     quantifiable_entities = 0
+#     key_dict = {}
+#     for i in json_dict:
+#         if i['Type'] == 'QUANTITY':
+#             quantifiable_entities += 1
+#         # org should have more value then normal titles ??
+#         if i['Type'] == 'ORGANIZATION' or i['Type'] == 'TITLE':
+#             key_dict[i['Text']] = 1
+#     return quantifiable_entities, key_dict
+
+def entities_dict(key_list: list):
+    # print(key_list)
+    # print("gruu")
+    # return
     key_dict = {}
-    for i in json_dict:
-        if i['Type'] == 'QUANTITY':
-            quantifiable_entities+=1
-        # org should have more value then normal titles ??
-        if i['Type'] == 'ORGANIZATION' or i['Type'] == 'TITLE':
-            key_dict[i['Text']]=1
-    return quantifiable_entities, key_dict
+    for i in key_list:
+        # print(i,end=" ")
+        # print(type(i))
+        if i in key_dict.keys():
+            key_dict[i]+=1
+        else:
+            key_dict[i]=1
+    return key_dict
 
 
-def main():
-    input_str = get_input_str()
-    jd_str = get_job_description()
+def get_improvements(resume_str, jd_str, tagged_data) -> str:
+    response = ''
+    # json_dict = text_to_keys(resume_str)
+    # jb_json_dict = text_to_keys(jd_str)
 
-    json_dict = text_to_keys(input_str)
-    jb_json_dict = text_to_keys(jd_str)
-    
-    q, key_dict = entities_dict(json_dict=jb_json_dict['Entities'])
-    quantifiable_entities, temp_dict = entities_dict(json_dict=json_dict['Entities'])
+    key_dict = entities_dict(tagged_data[1][0])
+    temp_dict = entities_dict(tagged_data[0][0])
+    # print()
+    # print(key_dict)
+    # print(temp_dict)
+    # print()
 
-    shared_items = {k: key_dict[k] for k in key_dict if k in temp_dict and key_dict[k] == temp_dict[k]}
-    print("Percentage Match with Job Description : ", (len(shared_items)/len(key_dict))*100)
-    if quantifiable_entities < 5 :
-        print("You have only", quantifiable_entities ,"quantifiable entities, add more !!")
-        
-    most_freq_words =  check_repetitive_words(s=input_str)
+    # q, key_dict = entities_dict(json_dict=jb_json_dict['Entities'])
+    # quantifiable_entities, temp_dict = entities_dict(
+        # json_dict=json_dict['Entities'])
+    # see this and maybe remove
+    quantifiable_entities=10
+    # print(temp_dict)
+    # print()
+    # print(key_dict)
+    # print()
+    shared_items = {
+        k: key_dict[k] for k in key_dict if k in temp_dict }
+
+    # print(shared_items)
+    if len(key_dict) > 0:
+        # print("Percentage Match with Job Description : ", (len(shared_items)/len(key_dict))*100)
+        p_match = "Percentage Match with Job Description : " + \
+            str((len(shared_items)/len(key_dict))*100) + "\n\n\n"
+        response += p_match
+
+    # print()
+    if quantifiable_entities < 5:
+        # print("You have only", quantifiable_entities ,"quantifiable entities, add more !!")
+        q_entity = "You have only" + \
+            str(quantifiable_entities) + \
+            "quantifiable entities, add more !!\n\n"
+        response += q_entity
+
+    # print()
+    most_freq_words = check_repetitive_words(s=resume_str)
     if len(most_freq_words) != 0:
-        print("These are the most frequent words. Try to reduce their frequency")
-        print(most_freq_words)
-
+        # print("These are the most frequent words. Try to reduce their frequency")
+        # print(most_freq_words)
+        response += "These are the most frequent words. Try to reduce their frequency \n" + \
+            str(most_freq_words) + "\n\n\n"
 
     spell = SpellChecker()
- 
+
     # Find those words that may be misspelled
-    misspelled = spell.unknown(input_str.split())
-    print("Please check the spelling of the following words.")
-    print(misspelled)
+    misspelled = spell.unknown(resume_str.split())
+    # print("Please check the spelling of the following words.")
+    # print(misspelled)
+
+    response += "Please check the spelling of the following words." + \
+        str(misspelled) + "\n"
+    # response+=misspelled
+    return response
+
+# def main():
+#     input_str = get_input_str()
+#     jd_str = get_job_description()
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+    # main()
