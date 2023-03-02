@@ -97,8 +97,8 @@ def main():
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('63f5f1778596fb144103c1f7.json'):
-        creds = Credentials.from_authorized_user_file('63f5f1778596fb144103c1f7.json', SCOPES)
+    if os.path.exists('63f6049a42279383fbc1e588.json'):
+        creds = Credentials.from_authorized_user_file('63f6049a42279383fbc1e588.json', SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -107,7 +107,7 @@ def main():
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
-        with open('63f5f1778596fb144103c1f7.json', 'w') as token:
+        with open('63f6049a42279383fbc1e588.json', 'w') as token:
             token.write(creds.to_json())
 
     try:
@@ -126,7 +126,7 @@ def main():
             "Dec": 12
         }
         service = build('gmail', 'v1', credentials=creds)
-        res = service.users().messages().list(userId='me',maxResults=50,q='after:1641024000').execute()
+        res = service.users().messages().list(userId='me',maxResults=500,q='after:1677662920',labelIds='INBOX').execute()
    
         senderList = []
         bodyList = []
@@ -181,3 +181,5 @@ def removeCSS(body):
 
 if __name__ == '__main__':
     main()
+
+

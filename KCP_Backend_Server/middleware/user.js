@@ -20,6 +20,7 @@ exports.auth = async (req, res, next) => {
     res.locals.user = user;
     next();
   } catch (err) {
+    console.log(err.message);
     return res.status(401).json({ msg: 'Error decoding token' });
   }
 };

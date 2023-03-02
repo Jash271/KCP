@@ -12,6 +12,7 @@ const connectDB = require('./config/db');
 const User = require('.//Models/user')
 const user = require('./Routes/user')
 const Google_Auth = require('./Routes/google_auth')
+const application = require('./Routes/application')
 const app = express();
 app.use(cors());
 
@@ -29,6 +30,7 @@ app.listen(PORT, () => {
   });
 app.use('/api/user',user)
 app.use('/api/google_auth',Google_Auth)
+app.use('/api/applications',application)
   app.get('/', (req, res) => {
       res.send('KCP Backend Server');
       }
