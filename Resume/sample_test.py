@@ -1,3 +1,10 @@
+# Recommend jobs to user (kind of like a job alert)
+# Create a discuss section....(Kind of like leetcode experience with company tags and position tags)
+# 
+# 
+
+
+
 '''
 
 str  = "Exposed data in a machine-friendly format and designed an efficient pre-processing module for handling bulk\
