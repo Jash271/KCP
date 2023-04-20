@@ -144,3 +144,51 @@ exports.handle_batch = async (req, res, next) => {
         res.status(500).send('Server Error');
     }
     }
+
+    exports.GetMetrics = async (req, res, next) => {
+        try{
+            const applications = await application.find({ User_Id: req.user._id });
+            var total = applications.length;
+            var applied = 0;
+            var interview = 0;
+            var offer = 0;
+            var rejected = 0;
+            
+            for (let i = 0; i < applications.length; i++) {
+                applied++;
+                if(applications[i].Status == "Interview"){
+                    interview++;
+                }
+                else if(applications[i].Status == "Offer"){
+                    offer++;
+                }
+                else if(applications[i].Status == "Rejected"){
+                    rejected++;
+                }
+            }
+            const intrvw_rate = interview/total;
+            const offer_rate = offer/total;
+            const reject_rate = rejected/total;
+    
+            var last_week = 0;
+            for (let i = 0; i < applications.length; i++) {
+                if(applications[i].last_update_timestamp > Date.now() - 7*24*60*60*1000){
+                    last_week++;
+                }
+            }
+            return res.status(200).json({
+                total: total,
+                applied: applied,
+                interview: interview,
+                offer: offer,
+                rejected: rejected,
+                intrvw_rate: intrvw_rate,
+                offer_rate: offer_rate,
+                reject_rate: reject_rate,
+                applications_last_week: last_week
+            });
+        }catch(e){
+            console.log(e.message);
+            res.status(500).send('Server Error');
+        }
+    }    
