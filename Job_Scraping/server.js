@@ -7,6 +7,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const Job = require('./Models/Jobs');
+const job_postings = require('./Routes/job_tracking')
 //Job.createIndexes({ Title: "text", Company: "text", Location: "text", Job_Tag: "text", Job_Query: "text" },{unique:true});
 const app = express();
 app.use(cors());
@@ -118,3 +119,5 @@ const Adzuna_Job = new CronJob('10 * * * * *', function() {
 
 Adzuna_Job.start();
 Linkedin_Job.start();
+
+app.use('/api/job_postings',job_postings)
