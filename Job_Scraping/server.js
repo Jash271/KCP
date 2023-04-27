@@ -7,7 +7,8 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const Job = require('./Models/Jobs');
-const job_postings = require('./Routes/job_tracking')
+const job_postings = require('./Routes/job_tracking');
+const saved_jobs = require('./Routes/saved_jobs');
 //Job.createIndexes({ Title: "text", Company: "text", Location: "text", Job_Tag: "text", Job_Query: "text" },{unique:true});
 const app = express();
 app.use(cors());
@@ -62,9 +63,9 @@ async function get_jobs(job_type) {
 }
 
 
-const Linkedin_Job = new CronJob('10  * * * * *', function() {
+const Linkedin_Job = new CronJob('10 * * * * *', function() {
     console.log("LinkedIn Cron Job Started");
-    const data = get_jobs("Machine Learning Internship");
+    const data = get_jobs("Software Engineer");
     data.then(response => {
     let tmp_res = response['data'];
     Job.insertMany(tmp_res,{ordered:false}).then(resp => { console.log("Linkedin Jobs Inserted") }).catch(err => { 
@@ -105,7 +106,7 @@ const fetch_adzuna_job = async (job_type) => {
 
 const Adzuna_Job = new CronJob('10 * * * * *', function() {
     console.log("Adzuna Cron Job Started");
-    const data = fetch_adzuna_job("Machine Learning Internship");
+    const data = fetch_adzuna_job("");
     data.then(response => {
     Job.insertMany(response,{ordered:false}).then(resp => { console.log("Adzuna Jobs Inserted") }).catch(err => { 
         console.log("Adzuna")
@@ -116,8 +117,8 @@ const Adzuna_Job = new CronJob('10 * * * * *', function() {
     })}, null, true, 'America/Los_Angeles');
 //console.log(data)
 
-
-Adzuna_Job.start();
 Linkedin_Job.start();
+Adzuna_Job.start();
 
-app.use('/api/job_postings',job_postings)
+app.use('/api/job_postings',job_postings);
+app.use('/api/savejobs',saved_jobs);
