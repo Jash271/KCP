@@ -80,19 +80,19 @@ def extract_resume(file_obj) -> str:
     return resume
 
 
-def get_response(jd_text, resume="", resume_obj=None) -> str:
+def get_response(jd_text, resume="", resume_obj=None) -> dict:
     # Fetch resume
-    response = ""
+    response = {}
     if resume == "":
         resume = extract_resume(resume_obj)
 
     # cal similarity
     documents = [resume, jd_text]
     sim_list, tagged_data = resume_jd_similarity(documents)
-    response += f'{sim_list[0]} between Resume and Job Description: {sim_list[1]}'
-    response += "\n\n\n"
+    response['similarity'] = [sim_list[0], sim_list[1]]
+    # response += "\n\n\n"
     # response += get_improvements(resume, jd_text)
-    response += get_improvements(resume, jd_text, tagged_data=tagged_data)
+    response['results'] = get_improvements(resume, jd_text, tagged_data=tagged_data)
     return response
 
 

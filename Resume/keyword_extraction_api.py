@@ -100,8 +100,8 @@ def entities_dict(key_list: list):
     return key_dict
 
 
-def get_improvements(resume_str, jd_str, tagged_data) -> str:
-    response = ''
+def get_improvements(resume_str, jd_str, tagged_data) -> dict:
+    response = {}
     # json_dict = text_to_keys(resume_str)
     # jb_json_dict = text_to_keys(jd_str)
 
@@ -129,7 +129,8 @@ def get_improvements(resume_str, jd_str, tagged_data) -> str:
         # print("Percentage Match with Job Description : ", (len(shared_items)/len(key_dict))*100)
         p_match = "Percentage Match with Job Description : " + \
             str((len(shared_items)/len(key_dict))*100) + "\n\n\n"
-        response += p_match
+        # response += p_match
+        response['match'] = (len(shared_items)/len(key_dict))*100
 
     # print()
     if quantifiable_entities < 5:
@@ -137,15 +138,18 @@ def get_improvements(resume_str, jd_str, tagged_data) -> str:
         q_entity = "You have only" + \
             str(quantifiable_entities) + \
             "quantifiable entities, add more !!\n\n"
-        response += q_entity
+        # response += q_entity
+        response['quant'] = quantifiable_entities
 
     # print()
     most_freq_words = check_repetitive_words(s=resume_str)
     if len(most_freq_words) != 0:
         # print("These are the most frequent words. Try to reduce their frequency")
         # print(most_freq_words)
-        response += "These are the most frequent words. Try to reduce their frequency \n" + \
-            str(most_freq_words) + "\n\n\n"
+        # response += "These are the most frequent words. Try to reduce their frequency \n" + \
+        #     str(most_freq_words) + "\n\n\n"
+
+        response['suggestions'] = str(most_freq_words)
 
     spell = SpellChecker()
 
@@ -154,9 +158,10 @@ def get_improvements(resume_str, jd_str, tagged_data) -> str:
     # print("Please check the spelling of the following words.")
     # print(misspelled)
 
-    response += "Please check the spelling of the following words." + \
-        str(misspelled) + "\n"
-    # response+=misspelled
+    # response += "Please check the spelling of the following words." + \
+    #     str(misspelled) + "\n"
+
+    response['spelling'] = str(misspelled)
     return response
 
 # def main():
