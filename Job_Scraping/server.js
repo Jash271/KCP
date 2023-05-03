@@ -63,7 +63,7 @@ async function get_jobs(job_type) {
 }
 
 
-const Linkedin_Job = new CronJob('10 * * * * *', function() {
+const Linkedin_Job = new CronJob('* * 2 * * *', function() {
     console.log("LinkedIn Cron Job Started");
     const data = get_jobs("Software Engineer");
     data.then(response => {
@@ -104,9 +104,9 @@ const fetch_adzuna_job = async (job_type) => {
         return final_data
 }
 
-const Adzuna_Job = new CronJob('10 * * * * *', function() {
+const Adzuna_Job = new CronJob('* * 2 * * *', function() {
     console.log("Adzuna Cron Job Started");
-    const data = fetch_adzuna_job("");
+    const data = fetch_adzuna_job("Software Engineer");
     data.then(response => {
     Job.insertMany(response,{ordered:false}).then(resp => { console.log("Adzuna Jobs Inserted") }).catch(err => { 
         console.log("Adzuna")
