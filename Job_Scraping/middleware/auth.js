@@ -7,7 +7,7 @@ exports.getUserId = async (req,res,next) =>{
         const config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url:'http://ec2-3-239-229-113.compute-1.amazonaws.com:3000/api/user/user_data',
+            url:'http://ec2-3-227-114-48.compute-1.amazonaws.com:3000/api/user/user_data',
             headers: {"x-auth-token":token }
         };
         let res = await axios(config);
