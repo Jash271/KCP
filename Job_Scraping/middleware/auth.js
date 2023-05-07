@@ -1,5 +1,7 @@
 const axios = require('axios');
 require('dotenv').config();
+const User = require('../Models/user');
+const jwt = require('jsonwebtoken');
 
 exports.getUserId = async (req,res,next) =>{
     try{
@@ -23,4 +25,27 @@ exports.getUserId = async (req,res,next) =>{
     }
 };
 
+  
+exports.auth = async (req, res, next) => {
+    //Get the token from the header
+    try {
+      const token = req.header('x-auth-token');
+  
+      //Check if not token
+  
+      if (!token) {
+        return res.status(401).json({ msg: 'No token ,authorization denied' });
+      }
+  
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.user.id);
+      req.user = user;
+      //console.log(req);
+      res.locals.user = user;
+      next();
+    } catch (err) {
+      console.log(err.message);
+      return res.status(401).json({ msg: 'Error decoding token' });
+    }
+  };
   
