@@ -104,7 +104,7 @@ const fetch_adzuna_job = async (job_type) => {
         return final_data
 }
 
-const Adzuna_Job = new CronJob('* * 2 * * *', function() {
+const Adzuna_Job = new CronJob('30 * * * * *', function() {
     console.log("Adzuna Cron Job Started");
     const data = fetch_adzuna_job("Software Engineer");
     data.then(response => {

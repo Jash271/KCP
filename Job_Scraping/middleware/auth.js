@@ -15,7 +15,7 @@ exports.getUserId = async (req,res,next) =>{
         let res = await axios(config);
         const user = res.data.user_data;
         req.user = user;
-        console.log(user);
+        //console.log(user);
         console.log("Middleware succ")
         next();
     }
