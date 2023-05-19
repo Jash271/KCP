@@ -122,6 +122,11 @@ resource "aws_instance" "KCP_Backend_Server" {
     availability_zone = var.az
     subnet_id = aws_subnet.Public_KCP_Subnet1.id
     security_groups = [aws_security_group.KCP_SG1.id]
+    root_block_device {
+      volume_type           = "gp3"   # Replace with the desired volume type
+      volume_size           = 20      # Replace with the desired volume size in GB
+      delete_on_termination = true    # Optional: Specify if the volume should be deleted when the instance is terminated
+    }
     
     user_data = "${file("script.sh")}"
     tags = {

@@ -9,14 +9,14 @@ sudo apt install docker.io -y
 sudo systemctl start docker
 sudo systemctl enable docker
 
-
+sudo apt install docker-compose -y
 
 # nvm install 16
 # echo "Node Installed"
 git clone https://github.com/Jash271/KCP.git
 # echo :"folder cloned"
 cd KCP/
-docker-compose up
+sudo docker-compose up
 # echo "In folder"
 # npm install
 # echo "dep installed"
