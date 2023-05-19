@@ -130,7 +130,7 @@ def get_improvements(resume_str, jd_str, tagged_data) -> dict:
         p_match = "Percentage Match with Job Description : " + \
             str((len(shared_items)/len(key_dict))*100) + "\n\n\n"
         # response += p_match
-        response['match'] = (len(shared_items)/len(key_dict))*100
+        response['word_match'] = (len(shared_items)/len(key_dict))*100
 
     # print()
     if quantifiable_entities < 5:

@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+  backendserver:
+    build:
+      context: ./KCP_Backend_Server
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    restart: always
+
+  jobscraping:
+    build:
+      context: ./Job_Scraping
+      dockerfile: Dockerfile
+    ports:
+      - 5050:5050
+    restart: always
+
+  resume:
+    build:
+      context: ./Resume
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"

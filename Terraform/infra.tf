@@ -25,6 +25,7 @@ variable "secret_key" {
 }
 /* Variable Declarations */
 provider "aws" {
+  region = "us-east-1"
   access_key = var.access_key
   secret_key = var.secret_key
 }
@@ -78,8 +79,20 @@ resource "aws_route_table_association" "Public_KCP_Route_Table_Association" {
 resource "aws_security_group" "KCP_SG1" {
     vpc_id = aws_vpc.KCP_VPC.id
     ingress{
-        from_port = "5000"
-        to_port = "5000"
+        from_port = "5001"
+        to_port = "5001"
+        cidr_blocks = ["0.0.0.0/0"]
+        protocol = "tcp"
+    }
+    ingress{
+        from_port = "5050"
+        to_port = "5050"
+        cidr_blocks = ["0.0.0.0/0"]
+        protocol = "tcp"
+    }
+    ingress{
+        from_port = "3000"
+        to_port = "3000"
         cidr_blocks = ["0.0.0.0/0"]
         protocol = "tcp"
     }
@@ -104,7 +117,7 @@ resource "aws_security_group" "KCP_SG1" {
 
 
 resource "aws_instance" "KCP_Backend_Server" {
-    ami = "ami-0557a15b87f6559cf"
+    ami = "ami-007855ac798b5175e"
     instance_type = "t2.micro"
     availability_zone = var.az
     subnet_id = aws_subnet.Public_KCP_Subnet1.id

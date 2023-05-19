@@ -1,4 +1,3 @@
-# nltk.download('punkt')
 import re
 
 import nltk

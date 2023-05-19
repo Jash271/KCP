@@ -1,5 +1,5 @@
 vpc_cidr = "10.0.0.0/16"
 subnet_cidr = "10.0.1.0/24"
 az = "us-east-1a"
-access_key = "######"
-secret_key = "######"
+access_key = "AKIARGGKIIXRBMACZKPF"
+secret_key = "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"
