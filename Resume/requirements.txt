@@ -22,7 +22,6 @@ nltk==3.8.1
 numpy==1.24.3
 packaging==23.1
 pandas==2.0.1
-parrot @ git+https://github.com/PrithivirajDamodaran/Parrot_Paraphraser.git@720a87a1ee557d8ed8d9a021adbdd1dd5616c5f9
 Pillow==9.5.0
 PyPDF2==3.0.1
 pyspellchecker==0.7.2

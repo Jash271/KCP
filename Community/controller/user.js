@@ -4,9 +4,9 @@ const feed = require('../Models/feed');
 exports.getPosts = async (req, res, next) => {
     try {
     //   const jobs = await feed.find({ User_Id:req.user.id });
-    const jobs = await feed.find({ User_Id:req.body.id });
+    const posts = await feed.find({ User_Id:req.body.id });
       return res.status(200).json({
-        jobs: jobs
+        posts: posts
       });
     } catch (err) {
       console.log(err.message);
