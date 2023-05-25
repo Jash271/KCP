@@ -1,8 +1,19 @@
 import nltkmodules
 from flask import Flask, request
-
+import warnings
 from resume_gen import paraphrase_fn
 from similarity_check import get_response
+from transformers import AutoModelWithLMHead, AutoTokenizer
+warnings.filterwarnings("ignore")
+
+model = None
+tokenizer = None
+
+def load_model():
+    global tokenizer
+    global model
+    tokenizer = AutoTokenizer.from_pretrained("mrm8488/t5-small-finetuned-quora-for-paraphrasing")
+    model = AutoModelWithLMHead.from_pretrained("mrm8488/t5-small-finetuned-quora-for-paraphrasing")
 
 app = Flask(__name__)
 
@@ -26,9 +37,8 @@ def paraphrase():
     form_data = request.form
 
     p_text = form_data['p_text']
-    p_out = paraphrase_fn(p_text)
-
-    return p_out
+    p_out = paraphrase_fn(model, tokenizer, p_text)
+    return p_out    
 
 
 @app.route("/resume/gen_resume", methods=['POST'])
@@ -39,9 +49,6 @@ def gen_resume():
     return form_data
     # form_data['first_name']
     # form_data['last_name']
-
-    
-
     # resume_text = form_data['resume_str']
     # jd_text = form_data['jd_str']
 
@@ -49,6 +56,6 @@ def gen_resume():
     # client_response = get_response(jd_text, resume=resume_text, resume_obj=f)
     # return "Success"
 
-
 if __name__ == '__main__':
+    load_model()
     app.run(host='0.0.0.0', port=5001, debug=True)

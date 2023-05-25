@@ -8,51 +8,24 @@ Resume generator
 Parallel computaion dekhle (do paraphrasing on gpu than cpu's)  Ray, Hugg Do Face ||ism
 
 '''
+def paraphrase_sentence(model, tokenizer, text, max_length=128):
 
+  input_ids = tokenizer.encode(text, return_tensors="pt", add_special_tokens=True)
+  generated_ids = model.generate(input_ids=input_ids, num_return_sequences=3, num_beams=5, max_length=max_length, no_repeat_ngram_size=2, repetition_penalty=6.0, length_penalty=1.0, early_stopping=True)
+  
+  preds = [tokenizer.decode(g, skip_special_tokens=True, clean_up_tokenization_spaces=True) for g in generated_ids]
 
-import os.path
-import pickle
-import warnings
+  return preds
 
-from parrot import Parrot
-
-warnings.filterwarnings("ignore")
-
-
-def paraphrase_sentence(phrase, parrot) -> str:
-    temp = ""
-    paraphrases = parrot.augment(
-        input_phrase=phrase, max_return_phrases=4, do_diverse=False)
-    if paraphrases:
-        for paraphrase in paraphrases:
-            temp += str(paraphrase[0])
-            temp += '\n'
-    return temp
-
-
-def paraphrase_fn(p_text) -> str:
-
-    if not os.path.isfile('test.pickle'):
-        parrot = Parrot()
-        with open("test.pickle", "wb") as outfile:
-            pickle.dump(parrot, outfile)
-
-    with open("test.pickle", "rb") as infile:
-        parrot = pickle.load(infile)
+def paraphrase_fn(model, tokenizer, p_text):
 
     phrases = p_text.split('.')
-    ans = ''
+    ans = []
     for phrase in phrases:
-        temp = paraphrase_sentence(phrase=phrase, parrot=parrot)
-
-        if temp == "":
-            temp = phrase
-        ans += temp
-        ans += '\n\n'
+        temp = paraphrase_sentence(model=model, tokenizer=tokenizer, text=phrase)
+        ans.append(temp)
     return ans
 
 
 if __name__ == '__main__':
     paraphrase_fn()
-    # main()
-    # fn2()
