@@ -16,7 +16,7 @@ const ApplicationSchema = new mongoose.Schema({
         //required: true
     },
     Status:{
-        type: String,
+        type: [String],
     },
     last_update_timestamp:{
         type: String,

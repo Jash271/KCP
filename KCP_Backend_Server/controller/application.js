@@ -51,17 +51,17 @@ exports.createApplication = async (req, res, next) => {
 exports.updateApplication = async (req, res, next) => {
     try {
         const { Company_Name, Position, Status, last_update_timestamp, notes } = req.body;
-        const updatedApplication = await application.findByIdAndUpdate(
-        req.params.id,
-        {
-            Company_Name,
-            Position,
-            Status,
-            last_update_timestamp,
-            notes,
-        },
-        { new: true }
-        );
+        const appplication_1 = await application.findById(req.params.id);
+        if (!appplication_1) {
+        return res.status(404).json({
+            msg: 'Application not found',
+            success: false,
+        });
+        }
+        // push Status in Status array
+        appplication_1.Status.push(Status);
+        
+        const updatedApplication = await appplication_1.save();
         return res.status(200).json({
         msg: 'Successfully Updated',
         success: true,
@@ -112,21 +112,14 @@ exports.handle_batch = async (req, res, next) => {
             User_Id: user_id,
         });
         if (existingApplication) {
-            const updatedApplication = await application.findByIdAndUpdate(
-            existingApplication._id,
-            {
-                Status,
-                last_update_timestamp,
-                notes,
-            },
-            { new: true }
-            );
+            existingApplication.Status.push(Status);
+            await existingApplication.save();
         }
         else {
             const newApplication = new application({
             Company_Name,
             Position,
-            Status,
+            Status:[Status],
             last_update_timestamp,
             notes,
             User_Id: user_id,

@@ -9,7 +9,21 @@ const SavedJobSchema = new mongoose.Schema({
     Job_Id:{
         type: mongoose.Schema.ObjectId,
         required: true,
-        ref: 'job' 
+        ref: 'Job' 
+    },
+    date: {
+        type: Date,
+        default: Date.now,
+    },
+    last_update_timestamp: {
+        type: Date,
+        default: Date.now,
+    },
+    update_at: {
+        type: Date,
+    },
+    random_str:{
+        type: String
     }
 },
     {
@@ -19,8 +33,8 @@ const SavedJobSchema = new mongoose.Schema({
 );
 
 
-SavedJobSchema.virtual('Job', {
-    ref: 'job',
+SavedJobSchema.virtual('Job_data', {
+    ref: 'Job',
     localField: 'Job_Id',
     foreignField: '_id',
     justOne: true

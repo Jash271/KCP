@@ -17,7 +17,7 @@ exports.auth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.user.id);
     req.user = user;
-    console.log(req);
+    //console.log(req);
     res.locals.user = user;
     next();
   } catch (err) {

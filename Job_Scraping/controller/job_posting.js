@@ -5,7 +5,6 @@ const {BloomFilter} = require('bloom-filters')
 const redis_client = require('../config/redis');
 
 /*
-
 Approach : Maintain a list of job ids that the user has already seen.
 Vanilla Approach :  Iterate through the list of jobs and check if the job id is present in the list of jobs that the user has already seen.
 Time Complexity : O(nm)
@@ -34,8 +33,10 @@ exports.getJobs = async (req, res, next) => {
       const limit = parseInt(req.query.limit);
       const startIndex = (page - 1) * limit;
       const session_activity = req.body.session_activity;
+      console.log(session_activity)
       // check if jobs exist against page no in redis
       let Jobs = [];
+      /*
       const redis_jobs = await redis_client.get(page);
       if (redis_jobs) {
         console.log('Fetching from Redis')
@@ -45,6 +46,8 @@ exports.getJobs = async (req, res, next) => {
         Jobs = await jobs.find().sort({Date: -1}).skip(startIndex).limit(limit);
         redis_client.setex(page, 172800 , JSON.stringify(Jobs));
       }
+      */
+      Jobs = await jobs.find().sort({Date: -1}).skip(startIndex).limit(limit);
       const job_len = Jobs.length;
       const usr = await user.findById(req.user.id);
       if (!usr) {

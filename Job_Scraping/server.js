@@ -11,7 +11,9 @@ const job_postings = require('./Routes/job_tracking');
 const saved_jobs = require('./Routes/saved_jobs');
 //Job.createIndexes({ Title: "text", Company: "text", Location: "text", Job_Tag: "text", Job_Query: "text" },{unique:true});
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: '*'
+}));
 connectDB()
 app.use(morgan('dev'));
 app.use(express.json({ extended: false }));
@@ -63,7 +65,7 @@ async function get_jobs(job_type) {
 }
 
 
-const Linkedin_Job = new CronJob('* * 2 * * *', function() {
+const Linkedin_Job = new CronJob('* * * * * 2', function() {
     console.log("LinkedIn Cron Job Started");
     const data = get_jobs("Software Engineer");
     data.then(response => {
@@ -104,7 +106,7 @@ const fetch_adzuna_job = async (job_type) => {
         return final_data
 }
 
-const Adzuna_Job = new CronJob('30 * * * * *', function() {
+const Adzuna_Job = new CronJob(' * * * * 2', function() {
     console.log("Adzuna Cron Job Started");
     const data = fetch_adzuna_job("Software Engineer");
     data.then(response => {
