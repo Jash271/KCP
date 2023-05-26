@@ -22,3 +22,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5001:5001"
+
+  community:
+    build:
+      context: ./Community
+      dockerfile: Dockerfile
+    ports:
+      - 6969:6969
+    restart: always
