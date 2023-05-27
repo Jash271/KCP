@@ -3,7 +3,7 @@ const feed = require('../Models/feed');
 
 exports.getPosts = async (req, res, next) => {
     try {
-    const posts = await feed.find({ User_Id:req.user.id });
+    const posts = await feed.find({ User_Id:req.user._id }).sort({timestamp: -1});
       return res.status(200).json({
         posts: posts
       });

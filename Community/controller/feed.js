@@ -17,7 +17,7 @@ exports.getFeed = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   try {
-    const usr = req.user.id
+    const usr = req.user._id
     const { title, post, tags } = req.body;
     console.log(req.body);
     const newPost = new feed({

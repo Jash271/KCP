@@ -3,6 +3,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 const db = process.env.MongoURI;
+const mongodb = mongoose.connection;
 
 const connectDB = async () => {
   try {
@@ -21,4 +22,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+module.exports = { connectDB, mongodb };

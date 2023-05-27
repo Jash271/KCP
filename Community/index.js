@@ -2,7 +2,7 @@ require('dotenv').config();
 const axios = require('axios');
 const morgan = require('morgan');
 const cheerio = require('cheerio');
-const connectDB = require('./config/db');
+const { connectDB, mongodb } = require('./config/db');
 const express = require('express');
 const cors = require('cors');
 
