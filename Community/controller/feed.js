@@ -5,7 +5,7 @@ const feed = require('../Models/feed');
 exports.getFeed = async (req, res, next) => {
   try {
     // const discuss = await feed.find().sort({Date: -1}).skip(startIndex).limit(limit);
-    const discuss = await feed.find().sort({timestamp: -1});
+    const discuss = await feed.find().sort({timestamp: -1}).populate('user_data', ['name', 'email', 'avatar']);
       return res.status(200).json({
         discuss: discuss
       });
@@ -17,11 +17,12 @@ exports.getFeed = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   try {
-    const { User_Id, title, post, tags } = req.body;
+    const usr = req.user.id
+    const { title, post, tags } = req.body;
     console.log(req.body);
     const newPost = new feed({
       // User_Id: req.user._id,
-      User_Id: User_Id,
+      User_Id: usr,
       title: title,
       post: post,
       tags: tags

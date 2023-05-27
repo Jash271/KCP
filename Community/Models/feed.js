@@ -4,10 +4,9 @@ const jwt = require('jsonwebtoken');
 //const application  = require('./application');
 const FeedSchema = new mongoose.Schema({
     User_Id: {
-        // type: mongoose.Schema.ObjectId,
-        type: String,
-        required: true
-        // ref: 'user'
+        type: mongoose.Schema.ObjectId,
+        required: true,
+        ref: 'user'
     },
     title:{
         type: String,
@@ -38,5 +37,13 @@ const FeedSchema = new mongoose.Schema({
 //     foreignField: '_id',
 //     justOne: true
 // });
+
+FeedSchema.virtual('user_data', {
+    ref: 'user',
+    localField: 'User_Id',
+    foreignField: '_id',
+    justOne: true
+});
+
 
 module.exports = mongoose.model('feed', FeedSchema);

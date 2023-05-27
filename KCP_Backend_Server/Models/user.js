@@ -26,6 +26,9 @@ const UserSchema = new mongoose.Schema({
     user_activity:{
         type: Object
     },
+    avatar: {
+        type: String
+    },
 
 
   },
