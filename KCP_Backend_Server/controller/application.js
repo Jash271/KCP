@@ -4,6 +4,8 @@ const application = require('../Models/application');
 exports.getApplications = async (req, res, next) => {
   try {
     const applications = await application.find({ User_Id: req.user._id });
+    // return data of applicayions in reverse orders
+    applications.reverse();
     return res.status(200).json({
       applications: applications,
     });

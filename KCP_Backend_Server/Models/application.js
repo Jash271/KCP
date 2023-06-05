@@ -23,7 +23,11 @@ const ApplicationSchema = new mongoose.Schema({
     },
     notes:{
         type:String
-    }
+    },
+    last_update:{
+        type: Date,
+        default: Date.now
+    },
 },
 {
     toJSON: { virtuals: true },
