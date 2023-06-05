@@ -30,3 +30,20 @@ services:
     ports:
       - 6969:6969
     restart: always
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 8080:8080
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    networks:
+      - grafana_network
+
+volumes:
+  grafana_data:
+
+networks:
+  grafana_network:
