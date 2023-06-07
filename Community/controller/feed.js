@@ -1,6 +1,6 @@
 const { debug } = require('request');
 const feed = require('../Models/feed');
-
+const user = require('../Models/user');
 
 exports.getFeed = async (req, res, next) => {
   try {
