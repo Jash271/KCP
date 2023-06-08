@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
   backendserver:
     build:
@@ -7,6 +7,9 @@ services:
     ports:
       - 3000:3000
     restart: always
+    container_name: kcp_backend
+    depends_on:
+      - nginx
 
   jobscraping:
     build:
@@ -15,13 +18,18 @@ services:
     ports:
       - 5050:5050
     restart: always
+    container_name: job_scraping
+    depends_on:
+      - nginx
 
-  resume:
-    build:
-      context: ./Resume
-      dockerfile: Dockerfile
-    ports:
-      - "5001:5001"
+  # resume:
+  #   build:
+  #     context: ./Resume
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5001:5001"
+  #   depends_on:
+  #     - nginx
 
   community:
     build:
@@ -30,6 +38,18 @@ services:
     ports:
       - 6969:6969
     restart: always
+    container_name: community
+    depends_on:
+      - nginx
+
+  nginx:
+    restart: always
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - "./nginx/default.conf:/etc/nginx/conf.d/default.conf"
+    ports:
+      - "8085:80"
 
   grafana:
     image: grafana/grafana
